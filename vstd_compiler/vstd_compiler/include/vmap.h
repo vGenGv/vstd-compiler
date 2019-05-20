@@ -19,9 +19,9 @@ namespace vstd
 		typedef std::vector<Vertex*> VertexVector;
 
 		VMapEdge() = default;
-		VMapEdge(const EdgeDType data): m_data(data) {}
-		VMapEdge(const VertexVector targets) :m_targets(targets) {}
-		VMapEdge(const EdgeDType data, const VertexVector targets)
+		VMapEdge(const EdgeDType &data): m_data(data) {}
+		VMapEdge(const VertexVector &targets) :m_targets(targets) {}
+		VMapEdge(const EdgeDType &data, const VertexVector &targets)
 			:m_data(data), m_targets(targets) {}
 		~VMapEdge() = default;
 
@@ -48,21 +48,21 @@ namespace vstd
 		//获取数据
 		EdgeDType getData()const { return m_data; }
 		//写数据
-		void setData(const EdgeDType data) { m_data = data; }
+		void setData(const EdgeDType &data) { m_data = data; }
 
 		//读来源
 		Vertex *const &from()const { return m_from; }
 		//获取来源
 		Vertex *getFrom()const { return m_from; }
 		//写来源
-		void setFrom(Vertex *vertex) { m_from = vertex; }
+		void setFrom(Vertex *const vertex) { m_from = vertex; }
 
 		//读目标
 		const VertexVector &targets()const { return m_targets; }
 		//获取目标
 		VertexVector getTargets()const { return m_targets; }
 		//写目标
-		void setTargets(const VertexVector targets) { m_targets = targets; }
+		void setTargets(const VertexVector &targets) { m_targets = targets; }
 		//清空目标
 		void clearTargets() { m_targets.clear(); }
 		//存在目标
@@ -87,6 +87,7 @@ namespace vstd
 		VertexVector m_targets; //目标
 	};
 
+	//顶点类
 	template<typename VertexDType, typename EdgeDType>
 	class VMapVertex
 	{
@@ -95,8 +96,66 @@ namespace vstd
 		typedef VMapEdge<VertexDType, EdgeDType> Edge;
 		typedef std::list<Edge*> EdgeList;
 
+		VMapVertex() = default;
+		VMapVertex(const VertexDType &data) :m_data(data) {}
+		VMapVertex(const EdgeList &edges) :m_edges(edges) {}
+		VMapVertex(const VertexDType &data, const EdgeList &edges)
+			:m_data(data), m_edges(edges) {}
+		~VMapVertex() = default;
+
+		//复制
+		VMapVertex(const VMapVertex &vertex)
+			:m_data(vertex.m_data), m_edges(vertex.m_edges) {}
+		//赋值
+		VMapVertex &operator=(const VMapVertex &vertex) {
+			m_data = vertex.data();
+			m_edges = vertex.edges();
+			return *this;
+		}
+
+		//等于
+		bool operator==(const VMapVertex &vertex) {
+			return m_data == vertex.data() && m_edges == vertex.edges();
+		}
+		//不等于
+		bool operator!=(const VMapVertex &vertex) {
+			return !operator==(vertex);
+		}
+
+		//读数据
+		const VertexDType &data()const { return m_data; }
+		//获取数据
+		VertexDType getData()const { return m_data; }
+		//写数据
+		void setData(const VertexDType &data) { m_data = data; }
+
+		//读边
+		const EdgeList &edges()const { return m_edges; }
+		//获取边
+		EdgeList getEdges()const { return m_edges; }
+		//写边
+		void setEdges(const EdgeList &edges) { m_edges = edges; }
+		//清空边
+		void clearEdges() { m_edges.clear(); }
+		//存在边
+		bool hasEdge(const Edge *const edge) {
+			return std::find(m_edges.begin(), m_edges.end(), edge) != m_edges.end();
+		}
+		//添加边
+		void addEdge(Edge *const edge) {
+			if (!hasEdge(edge))
+				m_edges.push_back(edge);
+		}
+		//删除边
+		void removeEdge(Edge *const edge) {
+			auto it = std::find(m_edges.begin(), m_edges.end(), edge);
+			if (it != m_edges.end())
+				m_edges.erase(it);
+		}
+
 	private:
-		VertexDType m_data;
+		VertexDType m_data; //数据
+		EdgeList m_edges; //边
 	};
 
 	template<typename VertexDType = int, typename EdgeDType = int>

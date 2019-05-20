@@ -5,12 +5,17 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-	cout << "Hello, world!" << endl;
+	cout << "Test begin!" << endl << endl;
 
 	vstd::VMapEdge<int, int> edge1, edge2(12);
 	edge1 = edge2;
-	cout << edge1.data() << endl;
+	vstd::VMapVertex<int, int> ver1(1), ver2;
+	ver1.addEdge(&edge1);
+	ver2 = ver1;
+	cout << ver2.data() << endl;
+	cout << (ver2.hasEdge(&edge2)) << endl;
 
+	cout << endl << "Test over! Press any key to continue..." << endl;
 	cin.get();
 	return 0;
 }
